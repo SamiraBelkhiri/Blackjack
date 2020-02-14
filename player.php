@@ -1,60 +1,43 @@
 <?php
-
-
-
 session_start();
+class Blackjack {
 
+    public $score;
 
-class Blackjack
-{
+    public function starting_game() {
 
-    private $score;
-
-    public function __construct($score)
-    {
-        $this->score = $score;
+        $card_one = rand(1, 11);
+        $card_two = rand(1, 11);
+        return [$card_one, $card_two];
     }
 
-    public function getScore()
-    {
-        return $this->score;
+    public function set_hit($current_score) {
+        $one_random_card = rand(1, 11);
+        $this->score = $one_random_card + $current_score;
+        //$_session['playerPoints'] +=  $one_random_card;
+        return [$one_random_card ,$this->score ];
     }
 
-
-    public function hit()
-    {
-        $random = rand(1, 11);
-        $this->score += $random;
-        echo $this->score;
-
-        if ($this->score > 21) {
-            echo "LOSER!!!";
-            session_destroy();
-
+    public function set_stand($total) {
+        $stopHits = 0;
+        $stopStand = 0;
+        if($total > 21){
+            $stopHits = 0;
+            $stopStand = 0;
+            echo "you are Looose";
         }
-
-
-    }
-
-    public function stand(Blackjack $dealer): string
-    {
-        while ($dealer->getScore() < 16) {
-            $dealer->hit();
+        if($total < 21){
+            $stopHits = 1;
+            $stopStand = 1;
+            echo "you can play again";
         }
-        if ($this->score > $dealer->getScore()) {
-            echo 'THE HOUSE ALWAYS WINS';
-        } else {
-            echo "THE HOUSE ALWAYS WINS";
+        if($total == 21){
+            $stopHits = 0;
+            $stopStand = 0;
+            echo "you are Black jack ";
         }
-
-        session_destroy();
     }
+    function set_surrender($surrender) {
 
-
-    public function surrender(): string
-    {
-
-        echo "YOU GIVE UP!";
-        session_destroy();
     }
 }

@@ -36,6 +36,7 @@ class Blackjack {
             $stopStand = 0;
             echo "you are Black jack ";
         }
+        return[$stopHits , $stopStand];
     }
     function set_surrender($surrender) {
 

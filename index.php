@@ -9,29 +9,11 @@ error_reporting(E_ALL);
 $dealer = new Blackjack();
 $player = new Blackjack();
 
-
-?>
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Blackjack PHP</title>
-</head>
-
-<body>
-<form method="post">
-    <button type="submit" name="start_button">START GAME!</button>
-    <button type="submit" name="hit_button">HIT!</button>
-    <button type="submit" name="stand_button">STAND!</button>
-    <button type="submit" name="surrender_button">SURRENDER!</button>
-</form>
-
-<?php
+$stopHits = 1;
+$stopStand = 1;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
     if (isset($_POST['start_button'])) { // click on start in order to get the 2 first cards
         $starting_game = $player->starting_game();
         echo "<h3>The cards of the player are: </h3>";
@@ -56,16 +38,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['player_points'] = $hit_turn[1];
         echo "Total: ". $hit_turn[1];
         echo " <br/> the dealer total is : ". $_SESSION['dealer_points'];
+
+        $buttonResult =$player->set_stand($hit_turn[1]);
+        $stopHits = $buttonResult[0];
+        $stopStand = $buttonResult[1];
     }
 
     if (isset($_POST['stand_button'])) {
 
         echo " the player total is : ". $_SESSION['player_points'];
-
         $stand_turn = $player->set_hit($_SESSION['dealer_points']);
         echo " <br/> the number is : ". $stand_turn[0];
         $_SESSION['dealer_points'] = $stand_turn[1];
         echo " the total is : ". $stand_turn[1];
+
+        $buttonResult =$player->set_stand($stand_turn[1]);
+        $stopHits = $buttonResult[0];
+        $stopStand = $buttonResult[1];
+
     }
 
     if (isset($_POST['surrender_button'])) {
@@ -77,6 +67,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 ?>
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Blackjack PHP</title>
+</head>
+
+<body>
+<form method="post">
+    <button type="submit" name="start_button" >START GAME!</button>
+    <button type="submit" name="hit_button" <?php if ($stopHits == '0'){ ?> disabled <?php   } ?>  > HIT!</button>
+    <button type="submit" name="stand_button" <?php if ($stopStand == '0'){ ?> disabled <?php   } ?>  > STAND!</button>
+    <button type="submit" name="surrender_button">SURRENDER!</button>
+</form>
+
+
 
 </body>
 
